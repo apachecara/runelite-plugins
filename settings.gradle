@@ -1,4 +1,4 @@
 rootProject.name = 'runelite-plugins'
 
 // Add new plugins here as subprojects:
-// include ':plugin-name'
+include ':seed-tracker'
