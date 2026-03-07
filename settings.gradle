@@ -2,3 +2,4 @@ rootProject.name = 'runelite-plugins'
 
 // Add new plugins here as subprojects:
 include ':seed-tracker'
+include ':contract-tooltip'
