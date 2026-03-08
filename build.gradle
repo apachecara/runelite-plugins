@@ -1,29 +1,44 @@
 plugins {
-    id 'java'
+	id 'java'
 }
 
-subprojects {
-    apply plugin: 'java'
+repositories {
+	mavenLocal()
+	maven {
+		url = 'https://repo.runelite.net'
+		content {
+			includeGroupByRegex("net\\.runelite.*")
+		}
+	}
+	mavenCentral()
+}
 
-    repositories {
-        mavenCentral()
-        maven { url = 'https://repo.runelite.net' }
-    }
+def runeLiteVersion = 'latest.release'
 
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+dependencies {
+	// Pull in all plugin subprojects
+	subprojects.each { subproject ->
+		implementation project(":${subproject.name}")
+	}
 
-    dependencies {
-        compileOnly group: 'net.runelite', name: 'client', version: '1.10.44'
-        compileOnly 'org.projectlombok:lombok:1.18.30'
-        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+	implementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+	implementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
 
-        compileOnly 'javax.inject:javax.inject:1'
-        compileOnly 'org.pf4j:pf4j:3.10.0'
+	implementation 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
 
-        testImplementation 'junit:junit:4.13.2'
-    }
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release.set(11)
+}
 
-    group = 'com.github.apachecara'
-    version = '1.0.0'
+tasks.register('run', JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.github.apachecara.AllPluginsLauncher'
+
+	jvmArgs "-ea",
+		"--add-opens", "java.desktop/com.apple.eawt=ALL-UNNAMED",
+		"--add-exports", "java.desktop/com.apple.eawt=ALL-UNNAMED"
+	args "--developer-mode", "--debug"
 }
