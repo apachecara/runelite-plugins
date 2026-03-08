@@ -35,7 +35,8 @@ tasks.withType(JavaCompile).configureEach {
 	options.release.set(11)
 }
 
-tasks.register('run', JavaExec) {
+// To run this plugin alone: ./gradlew :seed-tracker:runAlone
+tasks.register('runAlone', JavaExec) {
 	classpath = sourceSets.test.runtimeClasspath
 	mainClass = pluginMainClass
 
